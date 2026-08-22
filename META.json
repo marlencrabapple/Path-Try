@@ -1,5 +1,5 @@
 {
-   "abstract" : "I",
+   "abstract" : "Path::Tiny wrapper with e",
    "author" : [
       "Ian P Bradley <ian.bradley@studiocrabapple.com>"
    ],
@@ -42,12 +42,14 @@
       },
       "runtime" : {
          "requires" : {
+            "Exporter" : "0",
+            "IO::Handle::Common" : "0",
+            "List::Util" : "0",
+            "Object::Pad" : "0",
+            "Path::Tiny" : "0",
+            "Syntax::Keyword::Try" : "0",
+            "parent" : "0",
             "perl" : "v5.40.0"
-         }
-      },
-      "test" : {
-         "requires" : {
-            "Test::More" : "0.98"
          }
       }
    },

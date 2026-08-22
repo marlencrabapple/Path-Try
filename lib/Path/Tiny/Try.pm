@@ -12,12 +12,29 @@ use utf8;
 
 use parent 'Exporter';
 
+# use Encode;
+use Unicode::UTF8;
+use Sub::Util  qw'subname';
 use Path::Tiny qw'';
 use IO::Handle::Common;
 use Syntax::Keyword::Try;
 use List::Util qw'all';
+use Syntax::Keyword::Defer;
+use Struct::Dumb qw'-named_constructors';
 
 our @EXPORT = qw'path';
+
+# $error = {
+#     'path' => $path,
+#     meth   => $meth,
+#     callargs  => \@arg,
+#     thrown => { e => $e }
+# e => { thrown => $e, }
+# };
+
+struct
+  PathTinyException => [qw(path meth args lexical thrown)],
+  named_constructor => 1;
 
 field $path  : writer(set_path);
 field $error : reader;
@@ -43,12 +60,14 @@ method AUTOLOAD (@arg) {
         }
         catch ($e) {
             say STDERR "$e";
-            $error = {
-                'path' => $path,
-                meth   => $meth,
-                args   => \@arg,
-                thrown => $e,
-            };
+            PathTinyException(
+                self    => $self,
+                path    => $path,
+                meth    => $meth,
+                args    => \@arg,
+                lexical => [],
+                thrown  => $e
+            );
             return $self
         }
 

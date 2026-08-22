@@ -1,7 +1,7 @@
 
 # NAME
 
-Path::Tiny::Try - I
+Path::Tiny::Try - Path::Tiny wrapper with e
 
 # SYNOPSIS
 
