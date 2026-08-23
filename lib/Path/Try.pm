@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
 use Object::Pad ':experimental(:all)';
 
-package Path::Tiny::Try;
+package Path::Try;
 
-class Path::Tiny::Try;
+class Path::Try : does(Path::Try::Base);
 
 our $VERSION = "0.01";
 
@@ -12,18 +12,18 @@ use utf8;
 
 use parent 'Exporter';
 
-use Path::Tiny::Try::Error;
 use Unicode::UTF8;
-use Sub::Util          qw'subname';
-use Path::Tiny         qw'';
-use IO::Handle::Common qw'dmsg';
+use Path::Tiny qw'';
 use Syntax::Keyword::Try;
+use PadWalker qw'peek_my';
+use Path::Tiny::Try::Error;
 
-our @EXPORT = qw'path';
+our @EXPORT      = qw'path';
+our @EXPORT_OKAY = qw'dmsg';
 
 field $path  : writer(set_path);
 field $error : reader;
-field $arg   : reader;
+field $param : reader;
 
 ADJUST : params (:$path) {
     $path = Path::Tiny->new($path);
@@ -31,71 +31,60 @@ ADJUST : params (:$path) {
 };
 
 method AUTOLOAD (@arg) {
+    $param = \@arg;
 
-    $arg = \@arg;
     our $AUTOLOAD;
 
-    $error = undef;
-
-    my ( $package, $meth ) = ( $AUTOLOAD =~ /^(.*)::(.+)$/ );
-    my $reftype = reftype($self);
-    my $class   = blessed($self);
+    my ( $class, $meth ) = ( $AUTOLOAD =~ /^(.*)::(.+)$/ );
+    my $ref_class     = ref($self);
+    my $blessed_class = blessed($self);
     my @ret;
 
-    # dmsg $self, $AUTOLOAD, $package, $class, $reftype, $meth, $arg;
+    if ( $path && $self->isa($class) && $path->can($meth) ) {
+        $error = undef;
 
-    if ( $path && $self->isa($package) && $path->can($meth) ) {
         try {
-            dmsg $self, $path, $meth, \@arg;
             @ret = $path->$meth(@arg);
         }
         catch ($e) {
             say STDERR "$e";
 
             $error = Throw(
-                self    => $self,
-                path    => $path,
-                meth    => $meth,
-                arg     => \@arg,
+                self  => $self,
+                path  => $path,
+                meth  => $meth,
+                param => $param,
+
                 lexical => peek_my(1),
                 thrown  => $e,
                 $? ? ( status => $? ) : (),
                 $! ? ( errno  => $! ) : (),
             );
 
-            return $self, $error
+            return $self
         }
 
         if ( scalar @ret == 1 ) {
             my $ret_class = blessed( $ret[0] );
-            return $ret_class && $ret_class eq 'Path::Tiny'
+            return $ret[0]->isa('Path::Tiny')
               ? $class->new( 'path' => $ret[0] )
               : $ret[0];
         }
         elsif ( scalar @ret > 1 && $ret[0] ) {
 
             return
-              map { ref($_) eq 'Path::Tiny' ? $class->new( path => $_ ) : $_ }
+              map { $_->isa('Path::Tiny') ? $class->new( path => $_ ) : $_ }
               @ret;
-        }
-        else {
-            dmsg \@ret;
-            return @ret;
         }
 
     }
     elsif ( $meth eq 'DESTROY' ) {
-
         $path = undef;
-
-        #$self = undef;
-        return $self;
+        $self = undef;
     }
     else {
         say STDERR "$class does not have a method named '$meth'";
-        return $self;
-
-        # exit "eval $class->$meth";
+        return undef;
     }
 }
 
