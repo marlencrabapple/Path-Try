@@ -8,7 +8,7 @@ use lib 'lib';
 use Fcntl qw'S_IXUSR S_IXGRP S_IXOTH S_IRUSR S_IRGRP S_IROTH';
 use Cwd 'abs_path';
 use File::chdir;
-use Path::Tiny;
+use Path::Try;
 use List::Util 'none';
 use Getopt::Long qw(GetOptionsFromArray :config no_ignore_case auto_abbrev);
 
@@ -28,7 +28,7 @@ our $patharg = sub ( $arg, %opt ) {
         sub {
             $opt{assert} && $opt{assert} isa CODE ? $opt{assert}->(@_) : 1;
         }
-    ) unless $arg isa Path::Tiny;
+    ) unless $arg->isa('Path::Tiny');
 
     if ( my $dest = $opt{dest} ) {
 

@@ -1,10 +1,9 @@
 #!/usr/bin/env perl
 package asdf;
-use lib 'lib';
 
 use v5.40;
 use IO::Handle::Common;
-use Path::Tiny::Try;
+use Path::Try;
 
 my $path     = path("./");
 my $realpath = $path->realpath;

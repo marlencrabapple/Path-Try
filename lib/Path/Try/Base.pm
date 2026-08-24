@@ -12,7 +12,7 @@ use utf8;
 use parent 'Exporter';
 
 use vars qw'@EXPORT';
-@EXPORT = qw($undef adjust);
+@EXPORT = qw($undef adjust refstr);
 
 use Path::Tiny qw'';
 use Syntax::Keyword::Try;
@@ -32,6 +32,12 @@ APPLY {
     use Const::Fast;
     use PadWalker          qw'peek_my var_name';
     use IO::Handle::Common qw'dmsg';
+
+    # __CLASS__->import
+}
+
+sub refstr ($ref) {
+    reftype($ref) // '';
 }
 
 method adjust ( $field, $val ) {

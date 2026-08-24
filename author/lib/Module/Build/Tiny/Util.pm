@@ -2,7 +2,7 @@ package Module::Build::Tiny::Util;
 
 use v5.40;
 
-use Path::Tiny;
+use Path::Try;
 use Text::Xslate;
 use IPC::Nosh;
 use IO::Handle::Common;

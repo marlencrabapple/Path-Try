@@ -16,12 +16,15 @@ use Unicode::UTF8;
 use Path::Tiny qw'';
 use Syntax::Keyword::Try;
 use PadWalker qw'peek_my';
-use Path::Tiny::Try::Error;
+use Path::Try::Error;
+use IO::Handle::Common 'dmsg';
+
+use overload '""' => sub { dmsg( \@_ ); $_[0]->get_path }, fallback => 1;
 
 our @EXPORT      = qw'path';
 our @EXPORT_OKAY = qw'dmsg';
 
-field $path  : writer(set_path);
+field $path  : writer(set_path) : reader(get_path);
 field $error : reader;
 field $param : reader;
 
@@ -66,14 +69,14 @@ method AUTOLOAD (@arg) {
 
         if ( scalar @ret == 1 ) {
             my $ret_class = blessed( $ret[0] );
-            return $ret[0]->isa('Path::Tiny')
+            return $ret[0] && $ret[0]->isa('Path::Tiny')
               ? $class->new( 'path' => $ret[0] )
               : $ret[0];
         }
         elsif ( scalar @ret > 1 && $ret[0] ) {
 
             return
-              map { $_->isa('Path::Tiny') ? $class->new( path => $_ ) : $_ }
+              map { $_->isa('Path::Tiny') ? $class->new( 'path' => $_ ) : $_ }
               @ret;
         }
 

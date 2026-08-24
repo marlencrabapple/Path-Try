@@ -5,7 +5,7 @@ use v5.40;
 no warnings 'experimental::re_strict';
 use re 'strict';
 
-use Path::Tiny;
+use Path::Try;
 use Const::Fast;
 use TOML::Tiny qw'from_toml to_toml';
 use CPAN::Mini::Inject;
@@ -85,7 +85,7 @@ sub make_dist( $dist, %opt ) {
         info
 "Temporarily relocating './bin' from the build root to avoid conflict with authorship/build scripts";
 
-        $tmp = Path::Tiny->tempdir;
+        $tmp = Path::Try->tempdir;
 
         mvdir( $bindir, $tmp );
 

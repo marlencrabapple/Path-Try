@@ -1,5 +1,5 @@
 name = "Path-Try"
 badges = ["github-actions/test.yml"]
-module_maker="ModuleBuildTiny"
+module_maker = "ModuleBuildTiny"
 static_install = "auto"
-
+release_status = "testing"

@@ -15,30 +15,26 @@ use vars qw'@EXPORT';
 @EXPORT = qw(Throw);
 
 use IO::Handle::Common qw'dmsg';
+use PadWalker 'peek_my';
+use Path::Try::Base;
 
-field $instance : param(self) : reader;    #: reader(self);
-field $path     : reader;
-field $meth     : param : reader;
-field $param    : reader;
+field $instance : param : reader = undef;    #: reader(self);
+field $path     : reader = undef;
+field $meth     : param : reader = undef;
+field $param    : reader = undef;
 field $lexical  : reader : param //= {};
-field $thrown   : param  : reader;
+field $thrown   : param  : reader = "";
 
 field $status : param :
   reader { peek_my(1)->{'$?'}->$* if refstr( peek_my(1)->{'$?'} ) eq 'HASH' };
 field $oserr : param :
-  reader { peek_my(1)->{'$?!'}->$* if refstr( peek_my(1)->{'$?'} ) };
+  reader { peek_my(1)->{'$?!'}->$* if refstr( peek_my(1)->{'$!'} ) eq 'HASH' };
 
-ADJUST : params (%params) { $self = $params{self} if $params{self} };
-ADJUST : params (:$path)  { $self->adjust( $path,  $path  // $self->path ) };
-ADJUST : params (:$param) { $self->adjust( $param, $param // $self->param ) };
+# ADJUST : params (:$instance) { $instance = $params{self} if $params{self} };
+# ADJUST : params (:$path)  { $self->adjust( $path,  $path  // $self->path ) };
+# ADJUST : params (:$param) { $self->adjust( $param, $param // $self->param ) };
 
 # ADJUST : params (:$lexical)
-
-sub bool {
-    dmsg \@_;
-    __PACKAGE__->undef;
-}
-
 method e {
     $thrown;
 }
@@ -48,4 +44,4 @@ sub Throw (%param) {
     $err;
 }
 
-use overload 'fallback' => sub ($self) { dmsg $self, $self }, bool => \&bool;
+#use overload 'fallback' => sub ($self) { dmsg $self, $self }, bool => \&bool;
