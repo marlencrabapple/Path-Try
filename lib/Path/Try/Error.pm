@@ -18,23 +18,25 @@ use IO::Handle::Common qw'dmsg';
 use PadWalker 'peek_my';
 use Path::Try::Base;
 
-field $instance : param : reader = undef;    #: reader(self);
-field $path     : reader = undef;
-field $meth     : param : reader = undef;
-field $param    : reader = undef;
-field $lexical  : reader : param //= {};
-field $thrown   : param  : reader = "";
+field $instance : param : reader;
+field $path     : reader;
+field $meth     : param : reader;
+field $param    : param : reader;
+field $lexical  : param : reader = peek_my(1);
+field $thrown   : param : reader = "";
 
-field $status : param :
-  reader { peek_my(1)->{'$?'}->$* if refstr( peek_my(1)->{'$?'} ) eq 'HASH' };
-field $oserr : param :
-  reader { peek_my(1)->{'$?!'}->$* if refstr( peek_my(1)->{'$!'} ) eq 'HASH' };
+field $status : reader;
+field $oserr  : reader;
 
-# ADJUST : params (:$instance) { $instance = $params{self} if $params{self} };
-# ADJUST : params (:$path)  { $self->adjust( $path,  $path  // $self->path ) };
-# ADJUST : params (:$param) { $self->adjust( $param, $param // $self->param ) };
+ADJUST : params (:$path) { $self->adjust( $path, $instance->get_path ) }
 
-# ADJUST : params (:$lexical)
+  ADJUST : params (:$status, :$oserr) {
+    foreach my ( $field, $lexname ) ( $status, '$?', $oserr, '$!' ) {
+        my $lexval_ref = $$lexical{$lexname};
+        $self->adjust( $field, $lexval_ref ) if refstr($lexval_ref) eq 'SCALAR';
+    }
+  };
+
 method e {
     $thrown;
 }
@@ -44,4 +46,4 @@ sub Throw (%param) {
     $err;
 }
 
-#use overload 'fallback' => sub ($self) { dmsg $self, $self }, bool => \&bool;
+# use overload 'fallback' => sub ($self) { dmsg $self, $self }, bool => undef;
