@@ -19,16 +19,19 @@ use PadWalker qw'peek_my';
 use Path::Try::Error;
 use IO::Handle::Common 'dmsg';
 
-# use overload '""' => sub { $_[0]->get_path }, fallback => 1;
+use overload '""' => sub { dmsg( \@_ ); $_[0]->get_path }, fallback => 1;
 
 our @EXPORT      = qw'path';
 our @EXPORT_OKAY = qw'dmsg';
 
-field $path  : reader(get_path);
+field $path  : writer(set_path) : reader(get_path);
 field $error : reader;
 field $param : reader;
 
-ADJUST : params (:$path) { $self->adjust( $path, Path::Tiny::path($path) ) };
+ADJUST : params (:$path) {
+    $path = Path::Tiny->new($path);
+    $self->set_path($path)
+};
 
 method AUTOLOAD (@arg) {
     $param = \@arg;
@@ -36,7 +39,7 @@ method AUTOLOAD (@arg) {
     our $AUTOLOAD;
 
     my ( $class, $meth ) = ( $AUTOLOAD =~ /^(.*)::(.+)$/ );
-    my $reftype       = reftype($self);
+    my $ref_class     = ref($self);
     my $blessed_class = blessed($self);
     my @ret;
 
@@ -50,21 +53,18 @@ method AUTOLOAD (@arg) {
             say STDERR "$e";
 
             $error = Throw(
-                self => $self,
-
-                # path     => $path,
+                self  => $self,
+                path  => $path,
                 meth  => $meth,
                 param => $param,
 
-                # lexical  => peek_my(1),
-                thrown => $e,
-
-                # status   => $?,
-                # errno    => $!,
-                autoload => peek_my(0)
+                lexical => peek_my(1),
+                thrown  => $e,
+                $? ? ( status => $? ) : (),
+                $! ? ( errno  => $! ) : (),
             );
 
-            return $error
+            return $self
         }
 
         if ( scalar @ret == 1 ) {
