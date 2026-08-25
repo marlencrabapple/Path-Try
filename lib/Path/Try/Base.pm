@@ -41,7 +41,10 @@ sub refstr ($ref) {
 }
 
 method adjust ( $field, $val ) {
-    my $varname = var_name( 0, $field );
-    eval "$varname = \$val" if $varname;
+    dmsg peek_my($_) for ( 1 .. 2 );
+    my $varname = var_name( 2, \$field );
+    dmsg $self, $varname, $field, $val;
+    eval "\$$varname = \$val" if $varname;
+    dmsg $self, $field, $val, $varname;
     $self;
 }

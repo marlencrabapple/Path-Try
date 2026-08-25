@@ -19,7 +19,7 @@ use PadWalker qw'peek_my';
 use Path::Try::Error;
 use IO::Handle::Common 'dmsg';
 
-# use overload '""' => sub { $_[0]->get_path }, fallback => 1;
+use overload '""' => sub { $_[0]->get_path }, fallback => 1;
 
 our @EXPORT      = qw'path';
 our @EXPORT_OKAY = qw'dmsg';
@@ -28,7 +28,10 @@ field $path  : reader(get_path);
 field $error : reader;
 field $param : reader;
 
-ADJUST : params (:$path) { $self->adjust( $path, Path::Tiny::path($path) ) };
+ADJUST : params (%param) {
+    $path = Path::Tiny::path( $param{path} );
+    dmsg $path, $self, $param
+};
 
 method AUTOLOAD (@arg) {
     $param = \@arg;
@@ -52,19 +55,19 @@ method AUTOLOAD (@arg) {
             $error = Throw(
                 self => $self,
 
-                # path     => $path,
+                path  => $path,
                 meth  => $meth,
                 param => $param,
 
-                # lexical  => peek_my(1),
-                thrown => $e,
+                lexical => peek_my(1),
+                thrown  => $e,
 
-                # status   => $?,
-                # errno    => $!,
+                status   => $?,
+                oserr    => $!,
                 autoload => peek_my(0)
             );
 
-            return $error
+            $self, return $error
         }
 
         if ( scalar @ret == 1 ) {
