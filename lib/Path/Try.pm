@@ -16,6 +16,7 @@ use Unicode::UTF8;
 use Path::Tiny qw'';
 use Syntax::Keyword::Try;
 use PadWalker qw'peek_my';
+
 use Path::Try::Error;
 use IO::Handle::Common 'dmsg';
 
@@ -24,9 +25,9 @@ use overload '""' => sub { $_[0]->get_path }, fallback => 1;
 our @EXPORT      = qw'path';
 our @EXPORT_OKAY = qw'dmsg';
 
-field $path  : reader(get_path);
-field $error : reader;
-field $param : reader;
+field $path  : reader(get_path);    #: inheritable;
+field $error : reader;              #: inheritable      : reader;
+field $param : reader;              #   : inheritable;
 
 ADJUST : params (%param) {
     $path = Path::Tiny::path( $param{path} );
@@ -78,9 +79,9 @@ method AUTOLOAD (@arg) {
         }
         elsif ( scalar @ret > 1 && $ret[0] ) {
 
-            return
-              map { $_->isa('Path::Tiny') ? $class->new( 'path' => $_ ) : $_ }
-              @ret;
+            return map {
+                $_ && $_->isa('Path::Tiny') ? $class->new( 'path' => $_ ) : $_
+            } @ret;
         }
 
     }
@@ -104,7 +105,7 @@ __END__
 
 =head1 NAME
 
-Path::Tiny::Try - Path::Tiny wrapper with e
+Path::Tiny::Try - Path::Tiny wrapper
 
 =head1 SYNOPSIS
 

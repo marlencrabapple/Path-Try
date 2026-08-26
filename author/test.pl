@@ -1,7 +1,9 @@
 #!/usr/bin/env perl
-package asdf;
+package Path::Try::authortest;
 
 use v5.40;
+use lib 'lib';
+
 use IO::Handle::Common;
 use Path::Try;
 
@@ -16,10 +18,11 @@ foreach my $line ( path("cpanfile")->lines_utf8 ) {
 dmsg $path, $realpath, \@children;
 
 my $mkerr = path("/fdsfdsfsdfsdf");
-
 dmsg $mkerr;
+
 my $err = $mkerr->children;
-dmsg $err;
+
+# dmsg $err;
 
 if ($err) {
     dmsg $err;

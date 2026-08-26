@@ -22,11 +22,13 @@ field $instance : param(self) : reader;
 field $path     : reader;
 field $meth     : param : reader;
 field $param    : param : reader;
-field $lexical  : param : reader = peek_my(1);
+field $lexical  : param : reader;    #= peek_my(1);
 field $thrown   : param : reader = "";
 
 field $status : reader;
 field $oserr  : reader;
+
+# APPLY { dmsg \@_, [ peek_my($_) x 4 ] };
 
 ADJUST : params (:$path) { $self->adjust( $path, $instance->get_path ) };
 
@@ -36,10 +38,6 @@ ADJUST : params (:$status, :$oserr) {
         $self->adjust( $field, $lexval_ref ) if refstr($lexval_ref) eq 'SCALAR';
     }
 };
-
-method e {
-    $thrown;
-}
 
 sub Throw (%param) {
     my $err = __PACKAGE__->new(%param);
