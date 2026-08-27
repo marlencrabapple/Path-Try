@@ -26,12 +26,24 @@
       ]
    },
    "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Module::Build::Tiny" : "0"
+         }
+      },
       "configure" : {
          "requires" : {
             "Module::Build::Tiny" : "0.035"
          }
       },
       "develop" : {
+         "recommends" : {
+            "Devel::Trace" : "0",
+            "Minilla" : "0",
+            "Perl::Critic" : "0",
+            "Perl::Critic::Community" : "0",
+            "Perl::Tidy" : "0"
+         },
          "requires" : {
             "Test::CPAN::Meta" : "0",
             "Test::MinimumVersion::Fast" : "0.04",
@@ -42,13 +54,17 @@
       },
       "runtime" : {
          "requires" : {
-            "Exporter" : "0",
             "IO::Handle::Common" : "0",
-            "List::Util" : "0",
             "Object::Pad" : "0",
             "Path::Tiny" : "0",
             "Syntax::Keyword::Try" : "0",
+            "Unicode::UTF8" : "0",
             "perl" : "v5.40.0"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::More" : "0.98"
          }
       }
    },

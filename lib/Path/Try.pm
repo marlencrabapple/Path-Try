@@ -30,8 +30,10 @@ field $error : reader;              #: inheritable      : reader;
 field $param : reader;              #   : inheritable;
 
 ADJUST : params (%param) {
-    $path = Path::Tiny::path( $param{path} );
-    dmsg $path, $self, $param
+    $path = Path::Tiny::path( $param{path} )
+      unless $param{path}
+      && blessed( $param{path} )
+      && $param{path}->isa('Path::Tiny');
 };
 
 method AUTOLOAD (@arg) {
@@ -73,7 +75,8 @@ method AUTOLOAD (@arg) {
 
         if ( scalar @ret == 1 ) {
             my $ret_class = blessed( $ret[0] );
-            return $ret[0] && $ret[0]->isa('Path::Tiny')
+            return
+                $ret_class && $ret[0] && $ret[0]->isa('Path::Tiny')
               ? $class->new( 'path' => $ret[0] )
               : $ret[0];
         }
