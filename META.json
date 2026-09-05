@@ -1,5 +1,5 @@
 {
-   "abstract" : "Path::Tiny wrapper",
+   "abstract" : "Path::Tiny wrapper for seamless file operations on potentially bad paths and oddly encoded file content",
    "author" : [
       "Ian P Bradley <ian.bradley@studiocrabapple.com>"
    ],
