@@ -30,17 +30,8 @@ field $error : reader;              #: inheritable      : reader;
 field $param : reader;              #   : inheritable;
 
 ADJUST : params (%param) {
-
-    # if ( $param{path} ) {
-    #     my $class = blessed( $param{path} );
-    #     $path = Path::Tiny::path( $param{path} )
-    #       unless $class && any { $class } qw'Path::Tiny Path::Try';
-
-    #       delete $param{path}
-
-    # }
     $path = Path::Tiny::path( $param{path} );
-    dmsg $path, $self, $param
+    dmsg $path, $self
 };
 
 method AUTOLOAD (@arg) {
