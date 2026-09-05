@@ -16,7 +16,7 @@ use Unicode::UTF8;
 use Path::Tiny qw'';
 use Syntax::Keyword::Try;
 use PadWalker qw'peek_my';
-
+use List::Util 'any';
 use Path::Try::Error;
 use IO::Handle::Common 'dmsg';
 
@@ -30,10 +30,17 @@ field $error : reader;              #: inheritable      : reader;
 field $param : reader;              #   : inheritable;
 
 ADJUST : params (%param) {
-    $path = Path::Tiny::path( $param{path} )
-      unless $param{path}
-      && blessed( $param{path} )
-      && $param{path}->isa('Path::Tiny');
+
+    # if ( $param{path} ) {
+    #     my $class = blessed( $param{path} );
+    #     $path = Path::Tiny::path( $param{path} )
+    #       unless $class && any { $class } qw'Path::Tiny Path::Try';
+
+    #       delete $param{path}
+
+    # }
+    $path = Path::Tiny::path( $param{path} );
+    dmsg $path, $self, $param
 };
 
 method AUTOLOAD (@arg) {
