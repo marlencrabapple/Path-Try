@@ -1,6 +1,8 @@
 Revision history for Perl 5 extension Path-Try:
 
 {{$NEXT}}
+
+0.01 2026-09-08T15:20:31Z
     - First (TRIAL) release
     - Default exception handler for inaccessible paths and reading files
       with bad content encoding. Returns an error object with internal and
