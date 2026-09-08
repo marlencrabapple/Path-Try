@@ -1,6 +1,12 @@
-Revision history for Perl extension Path-Tiny-Try
+Revision history for Perl 5 extension Path-Try:
 
 {{$NEXT}}
-
-    - original version
-
+    - First (TRIAL) release
+    - Default exception handler for inaccessible paths and reading files
+      with bad content encoding. Returns an error object with internal and
+      caller lexical variables, constructor params, and other useful
+      information. The interface is currently unstable, and there are one
+      or more half-baked attempts allowing our exception class to evaluate
+      as undef or false-y to allow use of `or`/`||` operators, and
+      obviously simple conditionals based on operation success/failure, but
+      unfinished, most likely misunderstood and misguided is the state as of this upload
