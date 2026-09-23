@@ -72,10 +72,10 @@
    "resources" : {
       "repository" : {
          "type" : "git",
-         "url" : "https://codeberg.org/crabapp/Path-Try.git"
+         "url" : "ssh://git@codeberg.org/crabapp/Path-Try.git"
       }
    },
-   "version" : "0.01",
+   "version" : "0.01_1",
    "x_serialization_backend" : "JSON::PP version 4.16",
    "x_static_install" : 1
 }
