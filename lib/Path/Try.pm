@@ -5,7 +5,7 @@ package Path::Try;
 
 class Path::Try : does(Path::Try::Base);
 
-our $VERSION = "0.01";
+our $VERSION = "0.01.1";
 
 use v5.40;
 use utf8;
