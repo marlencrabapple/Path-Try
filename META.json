@@ -54,7 +54,7 @@
       },
       "runtime" : {
          "requires" : {
-            "IO::Handle::Common" : "0",
+            "IO::Handle::Common" : "v0.1.1",
             "Object::Pad" : "0",
             "Path::Tiny" : "0",
             "Syntax::Keyword::Try" : "0",
