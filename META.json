@@ -75,7 +75,7 @@
          "url" : "https://codeberg.org/crabapp/Path-Try.git"
       }
    },
-   "version" : "0.01",
+   "version" : "0.01.1",
    "x_serialization_backend" : "JSON::PP version 4.16",
    "x_static_install" : 1
 }
