@@ -72,7 +72,7 @@
    "resources" : {
       "repository" : {
          "type" : "git",
-         "url" : "https://codeberg.org/crabapp/Path-Try.git"
+         "url" : "ssh://git@codeberg.org/crabapp/Path-Try.git"
       }
    },
    "version" : "0.01.1",

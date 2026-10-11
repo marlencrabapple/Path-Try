@@ -2,8 +2,8 @@ requires 'perl', 'v5.40';
 
 requires 'Unicode::UTF8';
 
-requires 'IO::Handle::Common', '0.01.1',
-  dist => "CRABAPP/IPC-Handle-Common-0.01.1-TRIAL.tar.gz";
+requires 'IO::Handle::Common', '0.01_2',
+  dist => "CRABAPP/IO-Handle-Common-0.01_2-TRIAL.tar.gz";
   
 requires 'Object::Pad';
 requires 'Path::Tiny';
