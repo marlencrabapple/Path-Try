@@ -5,22 +5,26 @@ package Path::Try;
 
 class Path::Try : does(Path::Try::Base);
 
-our $VERSION = "0.01.1";
+our $VERSION = "0.01_2";
 
 use v5.40;
 use utf8;
 
 use parent 'Exporter';
 
+use builtin;
+use Const::Fast;
 use Unicode::UTF8;
 use Path::Tiny qw'';
 use Syntax::Keyword::Try;
 use PadWalker qw'peek_my';
 use List::Util 'any';
 use Path::Try::Error;
-use IO::Handle::Common 'dmsg';
+use IO::Handle::Common;
 
 use overload '""' => sub { $_[0]->get_path }, fallback => 1;
+
+use subs qw'refstr';
 
 our @EXPORT      = qw'path';
 our @EXPORT_OKAY = qw'dmsg';
@@ -31,10 +35,24 @@ field $param : reader;              #   : inheritable;
 
 ADJUST : params (%param) {
     $path = Path::Tiny::path( $param{path} );
-    dmsg $path, $self, $param
+
+    # dmsg $path, $self, $param
 };
 
-method AUTOLOAD (@arg) {
+sub AUTOLOAD ( $invoke, @arg ) {
+    our $AUTOLOAD;
+
+    # dmsg $AUTOLOAD, $invoke, \@arg;
+
+    # if ( blessed($invoke) && $invoke->isa('Path::Tiny') ) {
+    return $invoke->autoload(@arg);
+
+    # }
+    # dmsg $AUTOLOAD, $invoke, \@arg;
+    # return undef;
+}
+
+method autoload (@arg) {
     $param = \@arg;
 
     our $AUTOLOAD;
@@ -98,6 +116,28 @@ method AUTOLOAD (@arg) {
 
 sub path ($path) {
     my $self = __PACKAGE__->new( 'path' => Path::Tiny::path($path) );
+}
+
+method visit ( $cb, @arg ) {
+    const my $visit => \&Path::Tiny::visit;
+
+    my $opt = {};
+
+    if ( scalar @arg == 1 && Path::Try::Base::refstr( $arg[0] ) eq 'HASH' ) {
+        $opt = shift @arg;
+    }
+    elsif ( scalar @arg % 2 == 0 ) {
+        my %opt = (@arg);
+        my $opt = { %opt{qw'recurse follow'} };
+    }
+
+    $visit->(
+        $self,
+        sub ( $path, $state ) {
+            $cb->( path($path), $state );
+        },
+        $opt
+    );
 }
 
 __END__

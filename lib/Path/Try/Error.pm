@@ -14,7 +14,7 @@ use parent 'Exporter';
 use vars qw'@EXPORT';
 @EXPORT = qw(Throw);
 
-use IO::Handle::Common qw'dmsg';
+use IO::Handle::Common;
 use PadWalker 'peek_my';
 use Path::Try::Base;
 
@@ -45,5 +45,5 @@ sub Throw (%param) {
 }
 
 use overload
-  'fallback' => sub ($self) { dmsg $self, $self },
+  'fallback' => sub ($self) { dmsg $self; $self },
   bool       => sub { 0 };
