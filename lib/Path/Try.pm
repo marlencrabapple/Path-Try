@@ -5,13 +5,14 @@ package Path::Try;
 
 class Path::Try : does(Path::Try::Base);
 
-our $VERSION = "0.01_2";
+our $VERSION = "0.01_03";
 
 use v5.40;
 use utf8;
 
 use parent 'Exporter';
 
+use Carp;
 use builtin;
 use Const::Fast;
 use Unicode::UTF8;
@@ -69,7 +70,7 @@ method autoload (@arg) {
             @ret = $path->$meth(@arg);
         }
         catch ($e) {
-            say STDERR "$e";
+            carp "$e";
 
             $error = Throw(
                 self => $self,
@@ -85,6 +86,7 @@ method autoload (@arg) {
                 oserr    => $!,
                 autoload => peek_my(0)
             );
+            dmsg $error;
 
             $self, return $error
         }
@@ -115,7 +117,18 @@ method autoload (@arg) {
 }
 
 sub path ($path) {
-    my $self = __PACKAGE__->new( 'path' => Path::Tiny::path($path) );
+    croak "\$path is undefined" unless defined $path;
+    croak "\$path is empty string" if $path eq '';
+
+    try {
+        $path = Path::Tiny::path($path);
+    }
+    catch ($e) {
+        dmsg $e
+    }
+
+    my $self = __PACKAGE__->new( 'path' => $path );
+    $self;
 }
 
 method visit ( $cb, @arg ) {
