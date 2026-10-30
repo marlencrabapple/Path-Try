@@ -54,7 +54,7 @@
       },
       "runtime" : {
          "requires" : {
-            "IO::Handle::Common" : "0.01_2",
+            "IO::Handle::Common" : "0.01_05",
             "Object::Pad" : "0",
             "Path::Tiny" : "0",
             "Syntax::Keyword::Try" : "0",
@@ -75,7 +75,7 @@
          "url" : "ssh://git@codeberg.org/crabapp/Path-Try.git"
       }
    },
-   "version" : "0.01_2",
+   "version" : "0.01_03",
    "x_serialization_backend" : "JSON::PP version 4.16",
    "x_static_install" : 1
 }
